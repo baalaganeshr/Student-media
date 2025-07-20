@@ -205,7 +205,15 @@ async def register(user_data: UserRegistration, background_tasks: BackgroundTask
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User already exists"
+            detail="User already registered with this email. Please login or use a different email."
+        )
+    
+    # Check if roll number is already used
+    existing_roll = await db.users.find_one({"roll_number": user_data.roll_number})
+    if existing_roll:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This roll number is already registered. Please check your roll number."
         )
     
     # Hash password
@@ -232,7 +240,7 @@ async def register(user_data: UserRegistration, background_tasks: BackgroundTask
     verification_code = generate_verification_code()
     background_tasks.add_task(send_verification_email, user_data.email, verification_code)
     
-    return {"message": "Registration successful. Please check your email for verification code."}
+    return {"message": "Registration successful. Please check your email for verification code.", "user_id": user.id}
 
 @api_router.post("/auth/verify-email")
 async def verify_email(verification_data: EmailVerification):
