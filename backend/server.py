@@ -330,7 +330,7 @@ async def create_post(post_data: PostCreate, current_user: User = Depends(get_cu
     await db.posts.insert_one(post.dict())
     return {"message": "Post created successfully", "post_id": post.id}
 
-@api_router.get("/posts", response_model=List[PostWithUser])
+@api_router.get("/posts")
 async def get_posts(
     skip: int = 0,
     limit: int = 20,
@@ -351,20 +351,31 @@ async def get_posts(
         },
         {"$unwind": "$user"},
         {
-            "$addFields": {
-                "user": {
-                    "id": "$user.id",
-                    "name": "$user.name",
-                    "department": "$user.department",
-                    "year": "$user.year",
-                    "profile_image": "$user.profile_image"
-                }
+            "$project": {
+                "_id": 0,
+                "id": 1,
+                "user_id": 1,
+                "content": 1,
+                "image": 1,
+                "tags": 1,
+                "likes_count": 1,
+                "comments_count": 1,
+                "shares_count": 1,
+                "created_at": 1,
+                "updated_at": 1,
+                "user.id": 1,
+                "user.name": 1,
+                "user.department": 1,
+                "user.year": 1,
+                "user.profile_image": 1
             }
-        },
-        {"$project": {"_id": 0}}
+        }
     ]
     
     posts = await db.posts.aggregate(pipeline).to_list(length=limit)
+    
+    # Serialize any remaining ObjectIds
+    posts = serialize_object_ids(posts)
     
     # Check if user liked or bookmarked posts
     for post in posts:
@@ -388,21 +399,23 @@ async def get_posts(
             },
             {"$unwind": "$user"},
             {
-                "$addFields": {
-                    "user": {
-                        "name": "$user.name",
-                        "department": "$user.department",
-                        "year": "$user.year"
-                    }
+                "$project": {
+                    "_id": 0,
+                    "id": 1,
+                    "content": 1,
+                    "created_at": 1,
+                    "user.name": 1,
+                    "user.department": 1,
+                    "user.year": 1
                 }
-            },
-            {"$project": {"_id": 0}}
+            }
         ]
         
         comments = await db.comments.aggregate(comments_pipeline).to_list(length=3)
+        comments = serialize_object_ids(comments)
         post["comments"] = comments[::-1]  # Reverse to show oldest first
     
-    return posts
+    return JSONResponse(content=posts)
 
 @api_router.post("/posts/{post_id}/like")
 async def toggle_like(post_id: str, current_user: User = Depends(get_current_user)):
