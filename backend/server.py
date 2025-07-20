@@ -495,7 +495,8 @@ async def search_posts(search_data: SearchQuery, current_user: User = Depends(ge
                     "profile_image": "$user.profile_image"
                 }
             }
-        }
+        },
+        {"$project": {"_id": 0}}
     ]
     
     posts = await db.posts.aggregate(pipeline).to_list(length=50)
