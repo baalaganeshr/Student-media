@@ -38,6 +38,24 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production'
 app = FastAPI(title="StudentMedia API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
 
+# Custom JSON encoder for ObjectId
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        return super().default(obj)
+
+# Utility function to convert ObjectIds to strings in MongoDB results
+def serialize_object_ids(obj):
+    """Recursively convert ObjectId instances to strings in MongoDB results"""
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    elif isinstance(obj, dict):
+        return {k: serialize_object_ids(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [serialize_object_ids(item) for item in obj]
+    return obj
+
 # Models
 class UserRegistration(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
