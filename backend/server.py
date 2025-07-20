@@ -548,7 +548,7 @@ async def search_posts(search_data: SearchQuery, current_user: User = Depends(ge
     posts = await db.posts.aggregate(pipeline).to_list(length=50)
     posts = serialize_object_ids(posts)
     
-    return JSONResponse(content=posts)
+    return JSONResponse(content=json.loads(json.dumps(posts, cls=JSONEncoder)))
 
 @api_router.get("/departments")
 async def get_departments():
