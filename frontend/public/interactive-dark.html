@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentMedia - Interactive Dark Theme</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+        }
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+
+        function StudentMediaApp() {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [currentPage, setCurrentPage] = useState('dashboard');
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [posts, setPosts] = useState([
+                { id: 1, author: 'John Doe', content: 'Study group for CS101 tomorrow at 3PM in Library Room 201', time: '2 hours ago', likes: 15 },
+                { id: 2, author: 'Sarah Smith', content: 'Anyone have notes from yesterday\'s Physics lecture?', time: '4 hours ago', likes: 8 },
+                { id: 3, author: 'Mike Johnson', content: 'Great presentation on AI today! Thanks everyone who attended.', time: '1 day ago', likes: 23 }
+            ]);
+            const [studyGroups] = useState([
+                { id: 1, name: 'Mathematics Study Group', members: 15, subject: 'Calculus II', nextMeeting: 'Tomorrow 2PM' },
+                { id: 2, name: 'Computer Science Hub', members: 28, subject: 'Data Structures', nextMeeting: 'Friday 4PM' },
+                { id: 3, name: 'Physics Discussion', members: 12, subject: 'Quantum Mechanics', nextMeeting: 'Monday 3PM' }
+            ]);
+            const [events] = useState([
+                { id: 1, title: 'Tech Talk: AI in Education', date: 'Tomorrow', time: '2PM', location: 'Main Auditorium' },
+                { id: 2, title: 'Science Fair 2025', date: 'Next Week', time: '10AM', location: 'Campus Center' },
+                { id: 3, title: 'Career Workshop', date: 'Friday', time: '1PM', location: 'Room 305' }
+            ]);
+            
+            const darkTheme = {
+                primary: '#0f0f0f',
+                secondary: '#1a1a1a',
+                accent: '#2d2d2d',
+                highlight: '#3d3d3d',
+                text: '#ffffff',
+                textSecondary: '#b0b0b0',
+                border: '#404040',
+                success: '#00ff88',
+                warning: '#ff6b35',
+                info: '#00b4d8',
+                gradient: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d2d2d 100%)',
+                cardGradient: 'linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%)',
+                shadowDark: '0 8px 32px rgba(0, 0, 0, 0.8)',
+                shadowLight: '0 4px 16px rgba(255, 255, 255, 0.1)',
+                glowGreen: '0 0 20px rgba(0, 255, 136, 0.3)',
+                glowBlue: '0 0 20px rgba(0, 180, 216, 0.3)'
+            };
+
+            const handleLogin = () => {
+                if (email && password) {
+                    setIsLoggedIn(true);
+                    setCurrentPage('dashboard');
+                } else {
+                    alert('Please enter both email and password');
+                }
+            };
+
+            const handleLogout = () => {
+                setIsLoggedIn(false);
+                setCurrentPage('dashboard');
+                setEmail('');
+                setPassword('');
+            };
+
+            const Navigation = () => (
+                <nav style={{
+                    background: darkTheme.secondary,
+                    padding: '15px 20px',
+                    borderRadius: '15px',
+                    marginBottom: '30px',
+                    boxShadow: darkTheme.shadowDark,
+                    border: `1px solid ${darkTheme.border}`,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '15px'
+                    }}>
+                        <div 
+                            onClick={() => setCurrentPage('dashboard')}
+                            style={{
+                                width: '40px',
+                                height: '40px',
+                                background: darkTheme.success,
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '20px',
+                                boxShadow: darkTheme.glowGreen,
+                                cursor: 'pointer'
+                            }}
+                        >🎓</div>
+                        <h2 
+                            onClick={() => setCurrentPage('dashboard')}
+                            style={{ margin: 0, color: darkTheme.text, cursor: 'pointer' }}
+                        >
+                            StudentMedia
+                        </h2>
+                    </div>
+                    <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                        <button 
+                            onClick={() => setCurrentPage('notifications')}
+                            style={{
+                                background: currentPage === 'notifications' ? darkTheme.accent : 'transparent',
+                                border: `2px solid ${darkTheme.border}`,
+                                color: darkTheme.textSecondary,
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }}
+                        >🔔</button>
+                        <button 
+                            onClick={() => setCurrentPage('profile')}
+                            style={{
+                                background: currentPage === 'profile' ? darkTheme.accent : 'transparent',
+                                border: `2px solid ${darkTheme.border}`,
+                                color: darkTheme.textSecondary,
+                                padding: '8px 16px',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }}
+                        >👤</button>
+                    </div>
+                </nav>
+            );
+
+            const PostsPage = () => (
+                <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                        <h1 style={{ color: darkTheme.success, margin: 0 }}>📚 Recent Posts</h1>
+                        <button 
+                            onClick={() => setCurrentPage('dashboard')}
+                            style={{
+                                background: darkTheme.accent,
+                                color: darkTheme.text,
+                                border: `1px solid ${darkTheme.border}`,
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                cursor: 'pointer'
+                            }}
+                        >← Back</button>
+                    </div>
+                    
+                    <div style={{ marginBottom: '30px' }}>
+                        <div style={{
+                            background: darkTheme.cardGradient,
+                            padding: '20px',
+                            borderRadius: '15px',
+                            border: `1px solid ${darkTheme.border}`,
+                            boxShadow: darkTheme.shadowDark,
+                            marginBottom: '20px'
+                        }}>
+                            <textarea 
+                                placeholder="What's on your mind?"
+                                style={{
+                                    width: '100%',
+                                    minHeight: '100px',
+                                    background: darkTheme.accent,
+                                    border: `1px solid ${darkTheme.border}`,
+                                    borderRadius: '10px',
+                                    padding: '15px',
+                                    color: darkTheme.text,
+                                    fontSize: '16px',
+                                    resize: 'vertical',
+                                    marginBottom: '15px'
+                                }}
+                            />
+                            <button style={{
+                                background: darkTheme.success,
+                                color: darkTheme.primary,
+                                border: 'none',
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                                boxShadow: darkTheme.glowGreen
+                            }}>
+                                Post
+                            </button>
+                        </div>
+                    </div>
+
+                    {posts.map(post => (
+                        <div key={post.id} style={{
+                            background: darkTheme.cardGradient,
+                            padding: '20px',
+                            borderRadius: '15px',
+                            border: `1px solid ${darkTheme.border}`,
+                            boxShadow: darkTheme.shadowDark,
+                            marginBottom: '20px'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                                <div style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    background: darkTheme.success,
+                                    borderRadius: '50%',
+                                    marginRight: '15px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>👤</div>
+                                <div>
+                                    <h4 style={{ margin: 0, color: darkTheme.text }}>{post.author}</h4>
+                                    <small style={{ color: darkTheme.textSecondary }}>{post.time}</small>
+                                </div>
+                            </div>
+                            <p style={{ color: darkTheme.text, lineHeight: '1.6', marginBottom: '15px' }}>
+                                {post.content}
+                            </p>
+                            <div style={{ display: 'flex', gap: '15px' }}>
+                                <button style={{
+                                    background: 'transparent',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    color: darkTheme.textSecondary,
+                                    padding: '8px 15px',
+                                    borderRadius: '20px',
+                                    cursor: 'pointer'
+                                }}>
+                                    👍 {post.likes}
+                                </button>
+                                <button style={{
+                                    background: 'transparent',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    color: darkTheme.textSecondary,
+                                    padding: '8px 15px',
+                                    borderRadius: '20px',
+                                    cursor: 'pointer'
+                                }}>
+                                    💬 Comment
+                                </button>
+                                <button style={{
+                                    background: 'transparent',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    color: darkTheme.textSecondary,
+                                    padding: '8px 15px',
+                                    borderRadius: '20px',
+                                    cursor: 'pointer'
+                                }}>
+                                    🔄 Share
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+
+            const StudyGroupsPage = () => (
+                <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                        <h1 style={{ color: darkTheme.info, margin: 0 }}>👥 Study Groups</h1>
+                        <button 
+                            onClick={() => setCurrentPage('dashboard')}
+                            style={{
+                                background: darkTheme.accent,
+                                color: darkTheme.text,
+                                border: `1px solid ${darkTheme.border}`,
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                cursor: 'pointer'
+                            }}
+                        >← Back</button>
+                    </div>
+
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '25px'
+                    }}>
+                        {studyGroups.map(group => (
+                            <div key={group.id} style={{
+                                background: darkTheme.cardGradient,
+                                padding: '25px',
+                                borderRadius: '20px',
+                                border: `1px solid ${darkTheme.border}`,
+                                boxShadow: darkTheme.shadowDark
+                            }}>
+                                <h3 style={{ color: darkTheme.info, marginBottom: '15px' }}>
+                                    {group.name}
+                                </h3>
+                                <div style={{ marginBottom: '20px' }}>
+                                    <p style={{ color: darkTheme.text, marginBottom: '10px' }}>
+                                        <strong>Subject:</strong> {group.subject}
+                                    </p>
+                                    <p style={{ color: darkTheme.textSecondary, marginBottom: '10px' }}>
+                                        <strong>Members:</strong> {group.members}
+                                    </p>
+                                    <p style={{ color: darkTheme.textSecondary, marginBottom: '0' }}>
+                                        <strong>Next Meeting:</strong> {group.nextMeeting}
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <button style={{
+                                        background: darkTheme.info,
+                                        color: darkTheme.primary,
+                                        border: 'none',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: 'bold',
+                                        flex: 1,
+                                        boxShadow: darkTheme.glowBlue
+                                    }}>
+                                        Join Group
+                                    </button>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        color: darkTheme.textSecondary,
+                                        padding: '10px 15px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer'
+                                    }}>
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            const EventsPage = () => (
+                <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                        <h1 style={{ color: darkTheme.warning, margin: 0 }}>🎉 Campus Events</h1>
+                        <button 
+                            onClick={() => setCurrentPage('dashboard')}
+                            style={{
+                                background: darkTheme.accent,
+                                color: darkTheme.text,
+                                border: `1px solid ${darkTheme.border}`,
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                cursor: 'pointer'
+                            }}
+                        >← Back</button>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        {events.map(event => (
+                            <div key={event.id} style={{
+                                background: darkTheme.cardGradient,
+                                padding: '25px',
+                                borderRadius: '20px',
+                                border: `1px solid ${darkTheme.border}`,
+                                boxShadow: darkTheme.shadowDark,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+                            }}>
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ color: darkTheme.warning, marginBottom: '10px' }}>
+                                        {event.title}
+                                    </h3>
+                                    <div style={{ display: 'flex', gap: '20px', color: darkTheme.textSecondary }}>
+                                        <span>📅 {event.date}</span>
+                                        <span>🕐 {event.time}</span>
+                                        <span>📍 {event.location}</span>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <button style={{
+                                        background: darkTheme.warning,
+                                        color: darkTheme.primary,
+                                        border: 'none',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontWeight: 'bold'
+                                    }}>
+                                        Register
+                                    </button>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        color: darkTheme.textSecondary,
+                                        padding: '10px 15px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer'
+                                    }}>
+                                        Details
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            const ProfilePage = () => (
+                <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                        <h1 style={{ color: darkTheme.text, margin: 0 }}>👤 Profile</h1>
+                        <button 
+                            onClick={() => setCurrentPage('dashboard')}
+                            style={{
+                                background: darkTheme.accent,
+                                color: darkTheme.text,
+                                border: `1px solid ${darkTheme.border}`,
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                cursor: 'pointer'
+                            }}
+                        >← Back</button>
+                    </div>
+
+                    <div style={{
+                        background: darkTheme.cardGradient,
+                        padding: '30px',
+                        borderRadius: '20px',
+                        border: `1px solid ${darkTheme.border}`,
+                        boxShadow: darkTheme.shadowDark,
+                        textAlign: 'center',
+                        marginBottom: '30px'
+                    }}>
+                        <div style={{
+                            width: '100px',
+                            height: '100px',
+                            background: darkTheme.success,
+                            borderRadius: '50%',
+                            margin: '0 auto 20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '50px',
+                            boxShadow: darkTheme.glowGreen
+                        }}>👤</div>
+                        <h2 style={{ color: darkTheme.text, marginBottom: '10px' }}>John Student</h2>
+                        <p style={{ color: darkTheme.textSecondary, marginBottom: '20px' }}>Computer Science Major</p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', marginBottom: '20px' }}>
+                            <div>
+                                <h3 style={{ color: darkTheme.success, margin: 0 }}>12</h3>
+                                <small style={{ color: darkTheme.textSecondary }}>Posts</small>
+                            </div>
+                            <div>
+                                <h3 style={{ color: darkTheme.info, margin: 0 }}>5</h3>
+                                <small style={{ color: darkTheme.textSecondary }}>Groups</small>
+                            </div>
+                            <div>
+                                <h3 style={{ color: darkTheme.warning, margin: 0 }}>8</h3>
+                                <small style={{ color: darkTheme.textSecondary }}>Events</small>
+                            </div>
+                        </div>
+                        <button style={{
+                            background: darkTheme.accent,
+                            color: darkTheme.text,
+                            border: `1px solid ${darkTheme.border}`,
+                            padding: '10px 30px',
+                            borderRadius: '20px',
+                            cursor: 'pointer'
+                        }}>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+            );
+
+            const NotificationsPage = () => (
+                <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                        <h1 style={{ color: darkTheme.text, margin: 0 }}>🔔 Notifications</h1>
+                        <button 
+                            onClick={() => setCurrentPage('dashboard')}
+                            style={{
+                                background: darkTheme.accent,
+                                color: darkTheme.text,
+                                border: `1px solid ${darkTheme.border}`,
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                cursor: 'pointer'
+                            }}
+                        >← Back</button>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        {[
+                            { icon: '👍', text: 'Sarah liked your post about study groups', time: '2 hours ago' },
+                            { icon: '💬', text: 'New comment on "Physics study session"', time: '4 hours ago' },
+                            { icon: '🎉', text: 'Reminder: Tech Talk event tomorrow', time: '1 day ago' },
+                            { icon: '👥', text: 'You were added to "Math Study Group"', time: '2 days ago' }
+                        ].map((notification, index) => (
+                            <div key={index} style={{
+                                background: darkTheme.cardGradient,
+                                padding: '20px',
+                                borderRadius: '15px',
+                                border: `1px solid ${darkTheme.border}`,
+                                boxShadow: darkTheme.shadowDark,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '15px'
+                            }}>
+                                <div style={{ fontSize: '24px' }}>{notification.icon}</div>
+                                <div style={{ flex: 1 }}>
+                                    <p style={{ color: darkTheme.text, margin: '0 0 5px 0' }}>{notification.text}</p>
+                                    <small style={{ color: darkTheme.textSecondary }}>{notification.time}</small>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            if (!isLoggedIn) {
+                return (
+                    <div style={{
+                        minHeight: '100vh',
+                        background: darkTheme.gradient,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '20px'
+                    }}>
+                        <div style={{
+                            background: darkTheme.cardGradient,
+                            padding: '50px',
+                            borderRadius: '25px',
+                            border: `1px solid ${darkTheme.border}`,
+                            boxShadow: darkTheme.shadowDark,
+                            textAlign: 'center',
+                            color: darkTheme.text,
+                            maxWidth: '450px',
+                            width: '100%'
+                        }}>
+                            <div style={{
+                                width: '80px',
+                                height: '80px',
+                                background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                                borderRadius: '50%',
+                                margin: '0 auto 20px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '35px',
+                                boxShadow: `${darkTheme.glowGreen}, ${darkTheme.glowBlue}`
+                            }}>🎓</div>
+
+                            <h1 style={{ 
+                                fontSize: '2.8rem', 
+                                marginBottom: '10px',
+                                background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                fontWeight: 'bold'
+                            }}>
+                                StudentMedia
+                            </h1>
+                            <p style={{ marginBottom: '40px', color: darkTheme.textSecondary }}>
+                                Connect with classmates and build your academic network
+                            </p>
+                            
+                            <div style={{ marginBottom: '25px' }}>
+                                <input 
+                                    type="email" 
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '15px 20px',
+                                        marginBottom: '20px',
+                                        borderRadius: '12px',
+                                        border: `2px solid ${darkTheme.border}`,
+                                        background: darkTheme.accent,
+                                        color: darkTheme.text,
+                                        fontSize: '16px',
+                                        outline: 'none'
+                                    }}
+                                />
+                                <input 
+                                    type="password" 
+                                    placeholder="Enter your password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                                    style={{
+                                        width: '100%',
+                                        padding: '15px 20px',
+                                        marginBottom: '25px',
+                                        borderRadius: '12px',
+                                        border: `2px solid ${darkTheme.border}`,
+                                        background: darkTheme.accent,
+                                        color: darkTheme.text,
+                                        fontSize: '16px',
+                                        outline: 'none'
+                                    }}
+                                />
+                            </div>
+                            
+                            <button 
+                                onClick={handleLogin}
+                                style={{
+                                    background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                                    color: darkTheme.primary,
+                                    border: 'none',
+                                    padding: '15px 40px',
+                                    borderRadius: '25px',
+                                    cursor: 'pointer',
+                                    fontSize: '18px',
+                                    fontWeight: 'bold',
+                                    width: '100%',
+                                    marginBottom: '25px',
+                                    boxShadow: `${darkTheme.glowGreen}, ${darkTheme.glowBlue}`
+                                }}
+                            >
+                                🚀 Login to StudentMedia
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div style={{
+                    minHeight: '100vh',
+                    background: darkTheme.gradient,
+                    padding: '20px',
+                    color: darkTheme.text
+                }}>
+                    <Navigation />
+
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        {currentPage === 'dashboard' && (
+                            <>
+                                <h1 style={{ 
+                                    textAlign: 'center', 
+                                    marginBottom: '40px',
+                                    fontSize: '2.5rem',
+                                    background: 'linear-gradient(45deg, #00ff88, #00b4d8)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent'
+                                }}>
+                                    🎓 StudentMedia Dashboard
+                                </h1>
+                                
+                                {/* Stats Cards */}
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                    gap: '20px',
+                                    marginBottom: '30px'
+                                }}>
+                                    <div style={{
+                                        background: darkTheme.cardGradient,
+                                        padding: '20px',
+                                        borderRadius: '15px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        boxShadow: darkTheme.shadowDark,
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📊</div>
+                                        <h3 style={{ color: darkTheme.success, margin: '0 0 5px 0' }}>1,247</h3>
+                                        <p style={{ color: darkTheme.textSecondary, margin: 0 }}>Total Students</p>
+                                    </div>
+                                    <div style={{
+                                        background: darkTheme.cardGradient,
+                                        padding: '20px',
+                                        borderRadius: '15px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        boxShadow: darkTheme.shadowDark,
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>💬</div>
+                                        <h3 style={{ color: darkTheme.info, margin: '0 0 5px 0' }}>89</h3>
+                                        <p style={{ color: darkTheme.textSecondary, margin: 0 }}>Active Chats</p>
+                                    </div>
+                                    <div style={{
+                                        background: darkTheme.cardGradient,
+                                        padding: '20px',
+                                        borderRadius: '15px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        boxShadow: darkTheme.shadowDark,
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🎉</div>
+                                        <h3 style={{ color: darkTheme.warning, margin: '0 0 5px 0' }}>12</h3>
+                                        <p style={{ color: darkTheme.textSecondary, margin: 0 }}>Events Today</p>
+                                    </div>
+                                </div>
+                                
+                                {/* Main Content Grid */}
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                                    gap: '25px',
+                                    marginBottom: '30px'
+                                }}>
+                                    <div style={{
+                                        background: darkTheme.cardGradient,
+                                        padding: '25px',
+                                        borderRadius: '20px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        boxShadow: darkTheme.shadowDark
+                                    }}>
+                                        <h3 style={{ color: darkTheme.success, marginBottom: '15px' }}>📚 Recent Posts</h3>
+                                        <p style={{ color: darkTheme.textSecondary, marginBottom: '20px' }}>
+                                            See what your classmates are sharing
+                                        </p>
+                                        <div style={{
+                                            background: darkTheme.accent,
+                                            padding: '15px',
+                                            borderRadius: '10px',
+                                            border: `1px solid ${darkTheme.border}`,
+                                            marginBottom: '10px'
+                                        }}>
+                                            <div style={{ fontSize: '14px', color: darkTheme.textSecondary }}>
+                                                Latest: "Study group for CS101 tomorrow at 3PM"
+                                            </div>
+                                        </div>
+                                        <button 
+                                            onClick={() => setCurrentPage('posts')}
+                                            style={{
+                                                background: darkTheme.success,
+                                                color: darkTheme.primary,
+                                                border: 'none',
+                                                padding: '10px 20px',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold',
+                                                boxShadow: darkTheme.glowGreen
+                                            }}
+                                        >
+                                            View All Posts
+                                        </button>
+                                    </div>
+                                    
+                                    <div style={{
+                                        background: darkTheme.cardGradient,
+                                        padding: '25px',
+                                        borderRadius: '20px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        boxShadow: darkTheme.shadowDark
+                                    }}>
+                                        <h3 style={{ color: darkTheme.info, marginBottom: '15px' }}>👥 Study Groups</h3>
+                                        <p style={{ color: darkTheme.textSecondary, marginBottom: '20px' }}>
+                                            Join collaborative study sessions
+                                        </p>
+                                        <div style={{
+                                            background: darkTheme.accent,
+                                            padding: '15px',
+                                            borderRadius: '10px',
+                                            border: `1px solid ${darkTheme.border}`,
+                                            marginBottom: '10px'
+                                        }}>
+                                            <div style={{ fontSize: '14px', color: darkTheme.textSecondary }}>
+                                                Active: "Mathematics Study Group" - 15 members
+                                            </div>
+                                        </div>
+                                        <button 
+                                            onClick={() => setCurrentPage('groups')}
+                                            style={{
+                                                background: darkTheme.info,
+                                                color: darkTheme.primary,
+                                                border: 'none',
+                                                padding: '10px 20px',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold',
+                                                boxShadow: darkTheme.glowBlue
+                                            }}
+                                        >
+                                            Join Groups
+                                        </button>
+                                    </div>
+                                    
+                                    <div style={{
+                                        background: darkTheme.cardGradient,
+                                        padding: '25px',
+                                        borderRadius: '20px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        boxShadow: darkTheme.shadowDark
+                                    }}>
+                                        <h3 style={{ color: darkTheme.warning, marginBottom: '15px' }}>🎉 Campus Events</h3>
+                                        <p style={{ color: darkTheme.textSecondary, marginBottom: '20px' }}>
+                                            Discover events happening on campus
+                                        </p>
+                                        <div style={{
+                                            background: darkTheme.accent,
+                                            padding: '15px',
+                                            borderRadius: '10px',
+                                            border: `1px solid ${darkTheme.border}`,
+                                            marginBottom: '10px'
+                                        }}>
+                                            <div style={{ fontSize: '14px', color: darkTheme.textSecondary }}>
+                                                Next: "Tech Talk: AI in Education" - Tomorrow 2PM
+                                            </div>
+                                        </div>
+                                        <button 
+                                            onClick={() => setCurrentPage('events')}
+                                            style={{
+                                                background: darkTheme.warning,
+                                                color: darkTheme.primary,
+                                                border: 'none',
+                                                padding: '10px 20px',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            View Events
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                {/* Logout Button */}
+                                <div style={{ textAlign: 'center' }}>
+                                    <button 
+                                        onClick={handleLogout}
+                                        style={{
+                                            background: `linear-gradient(45deg, ${darkTheme.secondary}, ${darkTheme.accent})`,
+                                            color: darkTheme.text,
+                                            border: `2px solid ${darkTheme.border}`,
+                                            padding: '15px 30px',
+                                            borderRadius: '25px',
+                                            cursor: 'pointer',
+                                            fontSize: '16px',
+                                            fontWeight: 'bold',
+                                            boxShadow: darkTheme.shadowDark
+                                        }}
+                                    >
+                                        🔓 Logout
+                                    </button>
+                                </div>
+                            </>
+                        )}
+
+                        {currentPage === 'posts' && <PostsPage />}
+                        {currentPage === 'groups' && <StudyGroupsPage />}
+                        {currentPage === 'events' && <EventsPage />}
+                        {currentPage === 'profile' && <ProfilePage />}
+                        {currentPage === 'notifications' && <NotificationsPage />}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<StudentMediaApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

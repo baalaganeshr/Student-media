@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentMedia - Dark Theme</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+        }
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+
+        function StudentMediaApp() {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            
+            const darkTheme = {
+                primary: '#0f0f0f',      // Deep black
+                secondary: '#1a1a1a',    // Dark gray
+                accent: '#2d2d2d',       // Medium gray
+                highlight: '#3d3d3d',    // Light gray
+                text: '#ffffff',         // White text
+                textSecondary: '#b0b0b0', // Light gray text
+                border: '#404040',       // Border gray
+                success: '#00ff88',      // Neon green
+                warning: '#ff6b35',      // Orange
+                info: '#00b4d8',         // Blue
+                gradient: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d2d2d 100%)',
+                cardGradient: 'linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%)',
+                shadowDark: '0 8px 32px rgba(0, 0, 0, 0.8)',
+                shadowLight: '0 4px 16px rgba(255, 255, 255, 0.1)',
+                glowGreen: '0 0 20px rgba(0, 255, 136, 0.3)',
+                glowBlue: '0 0 20px rgba(0, 180, 216, 0.3)'
+            };
+            
+            if (isLoggedIn) {
+                return (
+                    <div style={{
+                        minHeight: '100vh',
+                        background: darkTheme.gradient,
+                        padding: '20px',
+                        color: darkTheme.text
+                    }}>
+                        {/* Navigation Bar */}
+                        <nav style={{
+                            background: darkTheme.secondary,
+                            padding: '15px 20px',
+                            borderRadius: '15px',
+                            marginBottom: '30px',
+                            boxShadow: darkTheme.shadowDark,
+                            border: `1px solid ${darkTheme.border}`,
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '15px'
+                            }}>
+                                <div style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    background: darkTheme.success,
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '20px',
+                                    boxShadow: darkTheme.glowGreen
+                                }}>🎓</div>
+                                <h2 style={{ margin: 0, color: darkTheme.text }}>StudentMedia</h2>
+                            </div>
+                            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                <button style={{
+                                    background: 'transparent',
+                                    border: `2px solid ${darkTheme.border}`,
+                                    color: darkTheme.textSecondary,
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease'
+                                }}>🔔</button>
+                                <button style={{
+                                    background: 'transparent',
+                                    border: `2px solid ${darkTheme.border}`,
+                                    color: darkTheme.textSecondary,
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease'
+                                }}>👤</button>
+                            </div>
+                        </nav>
+
+                        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                            <h1 style={{ 
+                                textAlign: 'center', 
+                                marginBottom: '40px',
+                                fontSize: '2.5rem',
+                                background: 'linear-gradient(45deg, #00ff88, #00b4d8)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                textShadow: darkTheme.glowGreen
+                            }}>
+                                🎓 StudentMedia Dashboard
+                            </h1>
+                            
+                            {/* Stats Cards */}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                gap: '20px',
+                                marginBottom: '30px'
+                            }}>
+                                <div style={{
+                                    background: darkTheme.cardGradient,
+                                    padding: '20px',
+                                    borderRadius: '15px',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    boxShadow: darkTheme.shadowDark,
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📊</div>
+                                    <h3 style={{ color: darkTheme.success, margin: '0 0 5px 0' }}>1,247</h3>
+                                    <p style={{ color: darkTheme.textSecondary, margin: 0 }}>Total Students</p>
+                                </div>
+                                <div style={{
+                                    background: darkTheme.cardGradient,
+                                    padding: '20px',
+                                    borderRadius: '15px',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    boxShadow: darkTheme.shadowDark,
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '10px' }}>💬</div>
+                                    <h3 style={{ color: darkTheme.info, margin: '0 0 5px 0' }}>89</h3>
+                                    <p style={{ color: darkTheme.textSecondary, margin: 0 }}>Active Chats</p>
+                                </div>
+                                <div style={{
+                                    background: darkTheme.cardGradient,
+                                    padding: '20px',
+                                    borderRadius: '15px',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    boxShadow: darkTheme.shadowDark,
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🎉</div>
+                                    <h3 style={{ color: darkTheme.warning, margin: '0 0 5px 0' }}>12</h3>
+                                    <p style={{ color: darkTheme.textSecondary, margin: 0 }}>Events Today</p>
+                                </div>
+                            </div>
+                            
+                            {/* Main Content Grid */}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                                gap: '25px',
+                                marginBottom: '30px'
+                            }}>
+                                <div style={{
+                                    background: darkTheme.cardGradient,
+                                    padding: '25px',
+                                    borderRadius: '20px',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    boxShadow: darkTheme.shadowDark,
+                                    position: 'relative',
+                                    overflow: 'hidden'
+                                }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-10px',
+                                        right: '-10px',
+                                        width: '60px',
+                                        height: '60px',
+                                        background: darkTheme.success,
+                                        borderRadius: '50%',
+                                        opacity: '0.1'
+                                    }}></div>
+                                    <h3 style={{ 
+                                        color: darkTheme.success, 
+                                        marginBottom: '15px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px'
+                                    }}>
+                                        📚 Recent Posts
+                                    </h3>
+                                    <p style={{ color: darkTheme.textSecondary, marginBottom: '20px' }}>
+                                        See what your classmates are sharing and discussing
+                                    </p>
+                                    <div style={{
+                                        background: darkTheme.accent,
+                                        padding: '15px',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        marginBottom: '10px'
+                                    }}>
+                                        <div style={{ fontSize: '14px', color: darkTheme.textSecondary }}>
+                                            Latest: "Study group for CS101 tomorrow at 3PM"
+                                        </div>
+                                    </div>
+                                    <button style={{
+                                        background: darkTheme.success,
+                                        color: darkTheme.primary,
+                                        border: 'none',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold',
+                                        boxShadow: darkTheme.glowGreen
+                                    }}>
+                                        View All Posts
+                                    </button>
+                                </div>
+                                
+                                <div style={{
+                                    background: darkTheme.cardGradient,
+                                    padding: '25px',
+                                    borderRadius: '20px',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    boxShadow: darkTheme.shadowDark,
+                                    position: 'relative',
+                                    overflow: 'hidden'
+                                }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-10px',
+                                        right: '-10px',
+                                        width: '60px',
+                                        height: '60px',
+                                        background: darkTheme.info,
+                                        borderRadius: '50%',
+                                        opacity: '0.1'
+                                    }}></div>
+                                    <h3 style={{ 
+                                        color: darkTheme.info, 
+                                        marginBottom: '15px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px'
+                                    }}>
+                                        👥 Study Groups
+                                    </h3>
+                                    <p style={{ color: darkTheme.textSecondary, marginBottom: '20px' }}>
+                                        Join collaborative study sessions with your peers
+                                    </p>
+                                    <div style={{
+                                        background: darkTheme.accent,
+                                        padding: '15px',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        marginBottom: '10px'
+                                    }}>
+                                        <div style={{ fontSize: '14px', color: darkTheme.textSecondary }}>
+                                            Active: "Mathematics Study Group" - 15 members
+                                        </div>
+                                    </div>
+                                    <button style={{
+                                        background: darkTheme.info,
+                                        color: darkTheme.primary,
+                                        border: 'none',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold',
+                                        boxShadow: darkTheme.glowBlue
+                                    }}>
+                                        Join Groups
+                                    </button>
+                                </div>
+                                
+                                <div style={{
+                                    background: darkTheme.cardGradient,
+                                    padding: '25px',
+                                    borderRadius: '20px',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    boxShadow: darkTheme.shadowDark,
+                                    position: 'relative',
+                                    overflow: 'hidden'
+                                }}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-10px',
+                                        right: '-10px',
+                                        width: '60px',
+                                        height: '60px',
+                                        background: darkTheme.warning,
+                                        borderRadius: '50%',
+                                        opacity: '0.1'
+                                    }}></div>
+                                    <h3 style={{ 
+                                        color: darkTheme.warning, 
+                                        marginBottom: '15px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px'
+                                    }}>
+                                        🎉 Campus Events
+                                    </h3>
+                                    <p style={{ color: darkTheme.textSecondary, marginBottom: '20px' }}>
+                                        Discover exciting events happening on campus
+                                    </p>
+                                    <div style={{
+                                        background: darkTheme.accent,
+                                        padding: '15px',
+                                        borderRadius: '10px',
+                                        border: `1px solid ${darkTheme.border}`,
+                                        marginBottom: '10px'
+                                    }}>
+                                        <div style={{ fontSize: '14px', color: darkTheme.textSecondary }}>
+                                            Next: "Tech Talk: AI in Education" - Tomorrow 2PM
+                                        </div>
+                                    </div>
+                                    <button style={{
+                                        background: darkTheme.warning,
+                                        color: darkTheme.primary,
+                                        border: 'none',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold'
+                                    }}>
+                                        View Events
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {/* Logout Button */}
+                            <div style={{ textAlign: 'center' }}>
+                                <button 
+                                    onClick={() => setIsLoggedIn(false)}
+                                    style={{
+                                        background: `linear-gradient(45deg, ${darkTheme.secondary}, ${darkTheme.accent})`,
+                                        color: darkTheme.text,
+                                        border: `2px solid ${darkTheme.border}`,
+                                        padding: '15px 30px',
+                                        borderRadius: '25px',
+                                        cursor: 'pointer',
+                                        fontSize: '16px',
+                                        fontWeight: 'bold',
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: darkTheme.shadowDark
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.transform = 'translateY(-2px)';
+                                        e.target.style.boxShadow = darkTheme.shadowLight;
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.transform = 'translateY(0)';
+                                        e.target.style.boxShadow = darkTheme.shadowDark;
+                                    }}
+                                >
+                                    🔓 Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div style={{
+                    minHeight: '100vh',
+                    background: darkTheme.gradient,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '20px'
+                }}>
+                    <div style={{
+                        background: darkTheme.cardGradient,
+                        padding: '50px',
+                        borderRadius: '25px',
+                        border: `1px solid ${darkTheme.border}`,
+                        boxShadow: darkTheme.shadowDark,
+                        textAlign: 'center',
+                        color: darkTheme.text,
+                        maxWidth: '450px',
+                        width: '100%',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        {/* Decorative elements */}
+                        <div style={{
+                            position: 'absolute',
+                            top: '-50px',
+                            right: '-50px',
+                            width: '100px',
+                            height: '100px',
+                            background: darkTheme.success,
+                            borderRadius: '50%',
+                            opacity: '0.1'
+                        }}></div>
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '-30px',
+                            left: '-30px',
+                            width: '60px',
+                            height: '60px',
+                            background: darkTheme.info,
+                            borderRadius: '50%',
+                            opacity: '0.1'
+                        }}></div>
+
+                        <div style={{
+                            width: '80px',
+                            height: '80px',
+                            background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                            borderRadius: '50%',
+                            margin: '0 auto 20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '35px',
+                            boxShadow: `${darkTheme.glowGreen}, ${darkTheme.glowBlue}`
+                        }}>🎓</div>
+
+                        <h1 style={{ 
+                            fontSize: '2.8rem', 
+                            marginBottom: '10px',
+                            background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            fontWeight: 'bold'
+                        }}>
+                            StudentMedia
+                        </h1>
+                        <p style={{ 
+                            marginBottom: '40px', 
+                            color: darkTheme.textSecondary,
+                            fontSize: '16px',
+                            lineHeight: '1.5'
+                        }}>
+                            Connect with classmates, share knowledge, and build your academic network in the dark.
+                        </p>
+                        
+                        <div style={{ marginBottom: '25px' }}>
+                            <input 
+                                type="email" 
+                                placeholder="Enter your email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '15px 20px',
+                                    marginBottom: '20px',
+                                    borderRadius: '12px',
+                                    border: `2px solid ${darkTheme.border}`,
+                                    background: darkTheme.accent,
+                                    color: darkTheme.text,
+                                    fontSize: '16px',
+                                    transition: 'all 0.3s ease',
+                                    outline: 'none'
+                                }}
+                                onFocus={(e) => {
+                                    e.target.style.borderColor = darkTheme.success;
+                                    e.target.style.boxShadow = darkTheme.glowGreen;
+                                }}
+                                onBlur={(e) => {
+                                    e.target.style.borderColor = darkTheme.border;
+                                    e.target.style.boxShadow = 'none';
+                                }}
+                            />
+                            <input 
+                                type="password" 
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '15px 20px',
+                                    marginBottom: '25px',
+                                    borderRadius: '12px',
+                                    border: `2px solid ${darkTheme.border}`,
+                                    background: darkTheme.accent,
+                                    color: darkTheme.text,
+                                    fontSize: '16px',
+                                    transition: 'all 0.3s ease',
+                                    outline: 'none'
+                                }}
+                                onFocus={(e) => {
+                                    e.target.style.borderColor = darkTheme.info;
+                                    e.target.style.boxShadow = darkTheme.glowBlue;
+                                }}
+                                onBlur={(e) => {
+                                    e.target.style.borderColor = darkTheme.border;
+                                    e.target.style.boxShadow = 'none';
+                                }}
+                            />
+                        </div>
+                        
+                        <button 
+                            onClick={() => setIsLoggedIn(true)}
+                            style={{
+                                background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                                color: darkTheme.primary,
+                                border: 'none',
+                                padding: '15px 40px',
+                                borderRadius: '25px',
+                                cursor: 'pointer',
+                                fontSize: '18px',
+                                fontWeight: 'bold',
+                                width: '100%',
+                                marginBottom: '25px',
+                                transition: 'all 0.3s ease',
+                                boxShadow: `${darkTheme.glowGreen}, ${darkTheme.glowBlue}`
+                            }}
+                            onMouseOver={(e) => {
+                                e.target.style.transform = 'translateY(-3px)';
+                                e.target.style.boxShadow = `${darkTheme.glowGreen}, ${darkTheme.glowBlue}, ${darkTheme.shadowLight}`;
+                            }}
+                            onMouseOut={(e) => {
+                                e.target.style.transform = 'translateY(0)';
+                                e.target.style.boxShadow = `${darkTheme.glowGreen}, ${darkTheme.glowBlue}`;
+                            }}
+                        >
+                            🚀 Login to StudentMedia
+                        </button>
+                        
+                        <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between',
+                            fontSize: '14px'
+                        }}>
+                            <span style={{ 
+                                color: darkTheme.textSecondary, 
+                                textDecoration: 'underline', 
+                                cursor: 'pointer',
+                                transition: 'color 0.3s ease'
+                            }}
+                            onMouseOver={(e) => e.target.style.color = darkTheme.success}
+                            onMouseOut={(e) => e.target.style.color = darkTheme.textSecondary}
+                            >
+                                Forgot Password?
+                            </span>
+                            <span style={{ 
+                                color: darkTheme.textSecondary, 
+                                textDecoration: 'underline', 
+                                cursor: 'pointer',
+                                transition: 'color 0.3s ease'
+                            }}
+                            onMouseOver={(e) => e.target.style.color = darkTheme.info}
+                            onMouseOut={(e) => e.target.style.color = darkTheme.textSecondary}
+                            >
+                                Create Account
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<StudentMediaApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
