@@ -567,6 +567,37 @@ async def search_posts(search_data: SearchQuery, current_user: User = Depends(ge
     
     return JSONResponse(content=json.loads(json.dumps(posts, cls=JSONEncoder)))
 
+@api_router.get("/demo/verification-code/{email}")
+async def get_demo_verification_code(email: str):
+    """Demo endpoint to get verification code for testing (remove in production)"""
+    code_record = await db.demo_codes.find_one(
+        {"email": email}, 
+        sort=[("_id", -1)]  # Get the latest code
+    )
+    
+    if code_record:
+        return {"email": email, "code": code_record["code"], "message": code_record["message"]}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No verification code found for this email"
+        )
+
+@api_router.delete("/demo/clear-user/{email}")
+async def clear_demo_user(email: str):
+    """Demo endpoint to clear user data for testing (remove in production)"""
+    # Delete user
+    await db.users.delete_many({"email": email})
+    # Delete password
+    user_records = await db.users.find({"email": email}).to_list(length=None)
+    for user in user_records:
+        await db.user_passwords.delete_many({"user_id": user["id"]})
+    # Clear verification codes
+    await db.verification_codes.delete_many({"email": email})
+    await db.demo_codes.delete_many({"email": email})
+    
+    return {"message": f"All data cleared for {email}"}
+
 @api_router.get("/departments")
 async def get_departments():
     departments = ['CSE', 'ECE', 'MECH', 'CIVIL', 'EEE', 'AIDS', 'AIML', 'IT', 'CHEMICAL']
