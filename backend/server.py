@@ -520,21 +520,31 @@ async def search_posts(search_data: SearchQuery, current_user: User = Depends(ge
         },
         {"$unwind": "$user"},
         {
-            "$addFields": {
-                "user": {
-                    "id": "$user.id",
-                    "name": "$user.name",
-                    "department": "$user.department",
-                    "year": "$user.year",
-                    "profile_image": "$user.profile_image"
-                }
+            "$project": {
+                "_id": 0,
+                "id": 1,
+                "user_id": 1,
+                "content": 1,
+                "image": 1,
+                "tags": 1,
+                "likes_count": 1,
+                "comments_count": 1,
+                "shares_count": 1,
+                "created_at": 1,
+                "updated_at": 1,
+                "user.id": 1,
+                "user.name": 1,
+                "user.department": 1,
+                "user.year": 1,
+                "user.profile_image": 1
             }
-        },
-        {"$project": {"_id": 0}}
+        }
     ]
     
     posts = await db.posts.aggregate(pipeline).to_list(length=50)
-    return posts
+    posts = serialize_object_ids(posts)
+    
+    return JSONResponse(content=posts)
 
 @api_router.get("/departments")
 async def get_departments():
