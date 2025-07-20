@@ -339,7 +339,8 @@ async def get_posts(
                     "profile_image": "$user.profile_image"
                 }
             }
-        }
+        },
+        {"$project": {"_id": 0}}
     ]
     
     posts = await db.posts.aggregate(pipeline).to_list(length=limit)
