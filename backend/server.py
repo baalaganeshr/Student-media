@@ -374,7 +374,8 @@ async def get_posts(
                         "year": "$user.year"
                     }
                 }
-            }
+            },
+            {"$project": {"_id": 0}}
         ]
         
         comments = await db.comments.aggregate(comments_pipeline).to_list(length=3)
