@@ -188,13 +188,22 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 # Mock email sending function (replace with real email service in production)
 async def send_verification_email(email: str, code: str):
     # In production, use services like SendGrid, AWS SES, etc.
-    print(f"Verification code for {email}: {code}")
+    print(f"📧 VERIFICATION CODE for {email}: {code}")
+    print(f"📧 In a real application, this would be sent via email service")
+    
     # Store verification code in database
     await db.verification_codes.insert_one({
         "email": email,
         "code": code,
         "created_at": datetime.utcnow(),
         "expires_at": datetime.utcnow() + timedelta(minutes=15)
+    })
+    
+    # For demo purposes, also store in a simple collection for easy retrieval
+    await db.demo_codes.insert_one({
+        "email": email,
+        "code": code,
+        "message": f"Your verification code is: {code}"
     })
 
 # Authentication Routes
