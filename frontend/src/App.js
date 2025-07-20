@@ -75,6 +75,7 @@ const AuthForm = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
   const { login } = useAuth();
 
   const departments = ['CSE', 'ECE', 'MECH', 'CIVIL', 'EEE', 'AIDS', 'AIML', 'IT', 'CHEMICAL'];
@@ -84,6 +85,25 @@ const AuthForm = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const clearUserData = async (email) => {
+    try {
+      await axios.delete(`${API}/demo/clear-user/${email}`);
+      setMessage('Previous registration cleared. Please try registering again.');
+    } catch (error) {
+      console.error('Error clearing user data:', error);
+    }
+  };
+
+  const getDemoCode = async (email) => {
+    try {
+      const response = await axios.get(`${API}/demo/verification-code/${email}`);
+      setVerificationCode(response.data.code);
+      setMessage(`Demo Mode: Auto-filled verification code: ${response.data.code}`);
+    } catch (error) {
+      setMessage('No verification code found. Please check your email or try registering again.');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -99,12 +119,31 @@ const AuthForm = () => {
         });
         login(response.data.user, response.data.access_token);
       } else {
-        await axios.post(`${API}/auth/register`, formData);
+        const response = await axios.post(`${API}/auth/register`, formData);
         setVerificationStep(true);
         setMessage('Registration successful! Please check your email for verification code.');
+        
+        // In demo mode, auto-fetch the verification code
+        if (demoMode) {
+          setTimeout(() => getDemoCode(formData.email), 1000);
+        }
       }
     } catch (error) {
-      setMessage(error.response?.data?.detail || 'An error occurred');
+      const errorMessage = error.response?.data?.detail || 'An error occurred';
+      
+      if (errorMessage.includes('already registered') || errorMessage.includes('already exists')) {
+        setMessage(`${errorMessage} Would you like to clear the previous registration and try again?`);
+        // Add clear data button for demo purposes
+        if (demoMode) {
+          setTimeout(() => {
+            if (window.confirm('Clear previous registration data and try again?')) {
+              clearUserData(formData.email);
+            }
+          }, 2000);
+        }
+      } else {
+        setMessage(errorMessage);
+      }
     }
     setLoading(false);
   };
@@ -118,11 +157,13 @@ const AuthForm = () => {
         email: formData.email,
         verification_code: verificationCode
       });
-      setMessage('Email verified! You can now login.');
+      setMessage('Email verified successfully! You can now login.');
       setVerificationStep(false);
       setIsLogin(true);
+      setFormData({ ...formData, password: '' }); // Clear password for security
     } catch (error) {
-      setMessage(error.response?.data?.detail || 'Verification failed');
+      const errorMessage = error.response?.data?.detail || 'Verification failed';
+      setMessage(errorMessage);
     }
     setLoading(false);
   };
@@ -133,7 +174,8 @@ const AuthForm = () => {
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Email Verification</h2>
-            <p className="text-gray-600 mt-2">Enter the 6-digit code sent to your email</p>
+            <p className="text-gray-600 mt-2">Enter the 6-digit code sent to:</p>
+            <p className="font-semibold text-indigo-600">{formData.email}</p>
           </div>
 
           <form onSubmit={handleVerification} className="space-y-6">
@@ -149,8 +191,20 @@ const AuthForm = () => {
               />
             </div>
 
+            {demoMode && (
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => getDemoCode(formData.email)}
+                  className="text-indigo-600 hover:text-indigo-700 text-sm underline"
+                >
+                  Get Demo Verification Code
+                </button>
+              </div>
+            )}
+
             {message && (
-              <div className={`p-4 rounded-lg ${message.includes('success') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+              <div className={`p-4 rounded-lg ${message.includes('success') || message.includes('Demo') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                 {message}
               </div>
             )}
@@ -161,6 +215,18 @@ const AuthForm = () => {
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-50"
             >
               {loading ? 'Verifying...' : 'Verify Email'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setVerificationStep(false);
+                setMessage('');
+                setVerificationCode('');
+              }}
+              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-xl transition-colors"
+            >
+              Back to Registration
             </button>
           </form>
         </div>
@@ -174,16 +240,24 @@ const AuthForm = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-indigo-600 mb-2">StudentMedia</h1>
           <p className="text-gray-600">Ramco Institute of Technology</p>
+          <p className="text-sm text-gray-500 mt-2">Connect • Share • Learn</p>
+          
           <div className="flex justify-center mt-6">
             <div className="flex bg-gray-100 rounded-xl p-1">
               <button
-                onClick={() => setIsLogin(true)}
+                onClick={() => {
+                  setIsLogin(true);
+                  setMessage('');
+                }}
                 className={`px-6 py-2 rounded-lg transition-all ${isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-600'}`}
               >
                 Login
               </button>
               <button
-                onClick={() => setIsLogin(false)}
+                onClick={() => {
+                  setIsLogin(false);
+                  setMessage('');
+                }}
                 className={`px-6 py-2 rounded-lg transition-all ${!isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-600'}`}
               >
                 Register
@@ -274,7 +348,7 @@ const AuthForm = () => {
           </div>
 
           {message && (
-            <div className={`p-4 rounded-lg ${message.includes('success') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+            <div className={`p-4 rounded-lg ${message.includes('success') || message.includes('cleared') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
               {message}
             </div>
           )}
@@ -288,9 +362,23 @@ const AuthForm = () => {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
-          <p>Exclusive to Ramco Institute of Technology students</p>
-          <p className="mt-1">Only @ritrjpm.ac.in emails are allowed</p>
+        <div className="mt-6 text-center">
+          <div className="text-sm text-gray-600">
+            <p>Exclusive to Ramco Institute of Technology students</p>
+            <p className="mt-1">Only @ritrjpm.ac.in emails are allowed</p>
+          </div>
+          
+          <div className="mt-4">
+            <label className="flex items-center justify-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={demoMode}
+                onChange={(e) => setDemoMode(e.target.checked)}
+                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span className="text-gray-600">Demo Mode (Auto-fill verification code)</span>
+            </label>
+          </div>
         </div>
       </div>
     </div>
