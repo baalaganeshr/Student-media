@@ -419,7 +419,7 @@ async def get_posts(
         comments = serialize_object_ids(comments)
         post["comments"] = comments[::-1]  # Reverse to show oldest first
     
-    return JSONResponse(content=posts)
+    return JSONResponse(content=json.loads(json.dumps(posts, cls=JSONEncoder)))
 
 @api_router.post("/posts/{post_id}/like")
 async def toggle_like(post_id: str, current_user: User = Depends(get_current_user)):
