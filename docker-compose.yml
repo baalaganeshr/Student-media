@@ -1,0 +1,11 @@
+services:
+  studentmedia-frontend:
+    build: .
+    ports:
+      - "3001:3002"
+    volumes:
+      - ./frontend/public:/app/public
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+    container_name: studentmedia-app

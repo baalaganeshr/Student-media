@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentMedia - Figma Design Implementation</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            overflow-x: hidden;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        .scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #404040 #1a1a1a;
+        }
+        .scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: #404040;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+
+        function StudentMediaApp() {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [currentView, setCurrentView] = useState('home');
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [selectedChat, setSelectedChat] = useState(null);
+            
+            // Keep your exact dark theme colors
+            const darkTheme = {
+                primary: '#0f0f0f',
+                secondary: '#1a1a1a',
+                accent: '#2d2d2d',
+                highlight: '#3d3d3d',
+                text: '#ffffff',
+                textSecondary: '#b0b0b0',
+                border: '#404040',
+                success: '#00ff88',
+                warning: '#ff6b35',
+                info: '#00b4d8',
+                gradient: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d2d2d 100%)',
+                cardGradient: 'linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%)',
+                shadowDark: '0 8px 32px rgba(0, 0, 0, 0.8)',
+                shadowLight: '0 4px 16px rgba(255, 255, 255, 0.1)',
+                glowGreen: '0 0 20px rgba(0, 255, 136, 0.3)',
+                glowBlue: '0 0 20px rgba(0, 180, 216, 0.3)'
+            };
+
+            // Sample data
+            const [posts] = useState([
+                {
+                    id: 1,
+                    author: 'Raguram S',
+                    avatar: '👨‍💻',
+                    content: 'Today was an amazing day! Had a great presentation and learned so much from classmates.',
+                    image: true,
+                    time: '2h',
+                    likes: 23,
+                    comments: 5
+                },
+                {
+                    id: 2,
+                    author: 'Sarah Wilson',
+                    avatar: '👩‍🎓',
+                    content: 'Study group session for tomorrow\'s exam. Who\'s joining?',
+                    time: '4h',
+                    likes: 18,
+                    comments: 12
+                }
+            ]);
+
+            const [chats] = useState([
+                { id: 1, name: 'Shah Rukh Khan', avatar: '🎬', lastMessage: 'Hey, how\'s your project going?', time: '2m', online: true },
+                { id: 2, name: 'Kamal Hassan', avatar: '🎭', lastMessage: 'See you tomorrow!', time: '5m', online: false },
+                { id: 3, name: 'Anudhka Shetty', avatar: '⭐', lastMessage: 'Thanks for the notes!', time: '1h', online: true },
+                { id: 4, name: 'Popo Hegde', avatar: '🌟', lastMessage: 'When is the next class?', time: '3h', online: false },
+                { id: 5, name: 'Vijay Sethupathi', avatar: '🎪', lastMessage: 'Great job on the presentation', time: '5h', online: false },
+                { id: 6, name: 'Samantha', avatar: '✨', lastMessage: 'Can you share the syllabus?', time: '1d', online: true }
+            ]);
+
+            const [tags] = useState([
+                { name: 'Trending', count: '2.1k', color: darkTheme.warning },
+                { name: 'Events', count: '892', color: darkTheme.info },
+                { name: 'Articles', count: '1.5k', color: darkTheme.success }
+            ]);
+
+            const handleLogin = () => {
+                if (email && password) {
+                    setIsLoggedIn(true);
+                    setCurrentView('home');
+                } else {
+                    alert('Please enter both email and password');
+                }
+            };
+
+            // Left Sidebar Component
+            const LeftSidebar = () => (
+                <div style={{
+                    width: '240px',
+                    height: '100vh',
+                    background: darkTheme.secondary,
+                    borderRight: `1px solid ${darkTheme.border}`,
+                    padding: '20px 0',
+                    position: 'fixed',
+                    left: 0,
+                    top: 0,
+                    overflow: 'hidden'
+                }}>
+                    {/* Profile Section */}
+                    <div style={{
+                        padding: '0 20px',
+                        marginBottom: '30px',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{
+                            width: '60px',
+                            height: '60px',
+                            background: darkTheme.success,
+                            borderRadius: '50%',
+                            margin: '0 auto 15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '24px',
+                            boxShadow: darkTheme.glowGreen
+                        }}>👨‍💻</div>
+                        <h3 style={{ 
+                            color: darkTheme.text, 
+                            margin: '0 0 5px 0',
+                            fontSize: '16px'
+                        }}>Aman Kohli</h3>
+                        <p style={{ 
+                            color: darkTheme.textSecondary, 
+                            margin: 0,
+                            fontSize: '12px'
+                        }}>@amankohli9419</p>
+                    </div>
+
+                    {/* Navigation Menu */}
+                    <nav style={{ padding: '0 10px' }}>
+                        {[
+                            { id: 'home', icon: '🏠', label: 'Home' },
+                            { id: 'community', icon: '👥', label: 'Create community' },
+                            { id: 'profile', icon: '👤', label: 'Profile' },
+                            { id: 'bookmarks', icon: '🔖', label: 'Bookmarks' },
+                            { id: 'like', icon: '❤️', label: 'Like' },
+                            { id: 'your-community', icon: '🌐', label: 'Your Community' },
+                            { id: 'recently-visited', icon: '🕒', label: 'Recently Visited' },
+                            { id: 'games', icon: '🎮', label: 'Games' },
+                            { id: 'mela', icon: '🎪', label: 'Mela' }
+                        ].map(item => (
+                            <div
+                                key={item.id}
+                                onClick={() => setCurrentView(item.id)}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px',
+                                    padding: '12px 15px',
+                                    margin: '2px 0',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    background: currentView === item.id ? darkTheme.accent : 'transparent',
+                                    color: currentView === item.id ? darkTheme.text : darkTheme.textSecondary,
+                                    transition: 'all 0.2s ease',
+                                    fontSize: '14px'
+                                }}
+                                onMouseOver={(e) => {
+                                    if (currentView !== item.id) {
+                                        e.target.style.background = darkTheme.highlight;
+                                    }
+                                }}
+                                onMouseOut={(e) => {
+                                    if (currentView !== item.id) {
+                                        e.target.style.background = 'transparent';
+                                    }
+                                }}
+                            >
+                                <span style={{ fontSize: '16px' }}>{item.icon}</span>
+                                <span>{item.label}</span>
+                            </div>
+                        ))}
+                    </nav>
+
+                    {/* Settings */}
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        left: '10px',
+                        right: '10px'
+                    }}>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            padding: '12px 15px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            color: darkTheme.textSecondary,
+                            fontSize: '14px'
+                        }}>
+                            <span style={{ fontSize: '16px' }}>⚙️</span>
+                            <span>Setting & Support</span>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Main Content Feed
+            const MainFeed = () => (
+                <div style={{
+                    flex: 1,
+                    height: '100vh',
+                    overflow: 'auto',
+                    background: darkTheme.primary
+                }} className="scrollbar">
+                    {/* Header */}
+                    <div style={{
+                        background: darkTheme.secondary,
+                        padding: '15px 20px',
+                        borderBottom: `1px solid ${darkTheme.border}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        position: 'sticky',
+                        top: 0,
+                        zIndex: 10
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span style={{ fontSize: '20px' }}>👁️</span>
+                            <h2 style={{ 
+                                color: darkTheme.text, 
+                                margin: 0,
+                                fontSize: '18px'
+                            }}>Student Media</h2>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                            <button style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: darkTheme.textSecondary,
+                                fontSize: '18px',
+                                cursor: 'pointer'
+                            }}>👥</button>
+                            <button style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: darkTheme.textSecondary,
+                                fontSize: '18px',
+                                cursor: 'pointer'
+                            }}>⚙️</button>
+                        </div>
+                    </div>
+
+                    {/* Search Bar */}
+                    <div style={{ padding: '20px' }}>
+                        <div style={{
+                            background: darkTheme.accent,
+                            borderRadius: '25px',
+                            padding: '12px 20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            border: `1px solid ${darkTheme.border}`
+                        }}>
+                            <span style={{ color: darkTheme.textSecondary }}>🔍</span>
+                            <input 
+                                type="text"
+                                placeholder="Search"
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    outline: 'none',
+                                    color: darkTheme.text,
+                                    flex: 1,
+                                    fontSize: '14px'
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Posts Feed */}
+                    <div style={{ padding: '0 20px 20px' }}>
+                        {posts.map(post => (
+                            <div key={post.id} style={{
+                                background: darkTheme.cardGradient,
+                                borderRadius: '15px',
+                                padding: '20px',
+                                marginBottom: '20px',
+                                border: `1px solid ${darkTheme.border}`,
+                                boxShadow: darkTheme.shadowDark
+                            }}>
+                                {/* Post Header */}
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    marginBottom: '15px'
+                                }}>
+                                    <div style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        background: darkTheme.success,
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginRight: '12px',
+                                        fontSize: '18px'
+                                    }}>{post.avatar}</div>
+                                    <div style={{ flex: 1 }}>
+                                        <h4 style={{ 
+                                            color: darkTheme.text, 
+                                            margin: '0 0 2px 0',
+                                            fontSize: '14px',
+                                            fontWeight: '600'
+                                        }}>{post.author}</h4>
+                                        <span style={{ 
+                                            color: darkTheme.textSecondary, 
+                                            fontSize: '12px'
+                                        }}>{post.time}</span>
+                                    </div>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: darkTheme.textSecondary,
+                                        cursor: 'pointer',
+                                        fontSize: '16px'
+                                    }}>⋯</button>
+                                </div>
+
+                                {/* Post Content */}
+                                <p style={{
+                                    color: darkTheme.text,
+                                    lineHeight: '1.5',
+                                    marginBottom: '15px',
+                                    fontSize: '14px'
+                                }}>{post.content}</p>
+
+                                {/* Post Image (if exists) */}
+                                {post.image && (
+                                    <div style={{
+                                        width: '100%',
+                                        height: '200px',
+                                        background: `linear-gradient(45deg, ${darkTheme.accent}, ${darkTheme.highlight})`,
+                                        borderRadius: '10px',
+                                        marginBottom: '15px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: darkTheme.textSecondary,
+                                        fontSize: '48px'
+                                    }}>🖼️</div>
+                                )}
+
+                                {/* Post Actions */}
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '20px',
+                                    paddingTop: '15px',
+                                    borderTop: `1px solid ${darkTheme.border}`
+                                }}>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: darkTheme.textSecondary,
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        fontSize: '12px'
+                                    }}>
+                                        <span style={{ fontSize: '14px' }}>👍</span>
+                                        {post.likes}
+                                    </button>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: darkTheme.textSecondary,
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        fontSize: '12px'
+                                    }}>
+                                        <span style={{ fontSize: '14px' }}>💬</span>
+                                        {post.comments}
+                                    </button>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: darkTheme.textSecondary,
+                                        cursor: 'pointer',
+                                        fontSize: '14px'
+                                    }}>🔄</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            // Tags Sidebar
+            const TagsSidebar = () => (
+                <div style={{
+                    width: '280px',
+                    height: '100vh',
+                    background: darkTheme.secondary,
+                    borderLeft: `1px solid ${darkTheme.border}`,
+                    padding: '20px',
+                    overflow: 'auto'
+                }} className="scrollbar">
+                    {/* Header */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '20px'
+                    }}>
+                        <h3 style={{ 
+                            color: darkTheme.text, 
+                            margin: 0,
+                            fontSize: '16px'
+                        }}>Tags</h3>
+                        <button style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: darkTheme.textSecondary,
+                            cursor: 'pointer',
+                            fontSize: '16px'
+                        }}>⚙️</button>
+                    </div>
+
+                    {/* Search */}
+                    <div style={{
+                        background: darkTheme.accent,
+                        borderRadius: '20px',
+                        padding: '8px 15px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        marginBottom: '20px',
+                        border: `1px solid ${darkTheme.border}`
+                    }}>
+                        <span style={{ color: darkTheme.textSecondary, fontSize: '14px' }}>🔍</span>
+                        <input 
+                            type="text"
+                            placeholder="Search"
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                outline: 'none',
+                                color: darkTheme.text,
+                                flex: 1,
+                                fontSize: '12px'
+                            }}
+                        />
+                    </div>
+
+                    {/* Tag Categories */}
+                    <div style={{ marginBottom: '25px' }}>
+                        <div style={{
+                            display: 'flex',
+                            gap: '10px',
+                            marginBottom: '20px'
+                        }}>
+                            {tags.map(tag => (
+                                <div key={tag.name} style={{
+                                    background: darkTheme.accent,
+                                    padding: '8px 12px',
+                                    borderRadius: '15px',
+                                    border: `1px solid ${darkTheme.border}`,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease'
+                                }}>
+                                    <div style={{ 
+                                        color: tag.color, 
+                                        fontSize: '11px',
+                                        fontWeight: '600'
+                                    }}>{tag.name}</div>
+                                    <div style={{ 
+                                        color: darkTheme.textSecondary, 
+                                        fontSize: '9px'
+                                    }}>{tag.count}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Recent Activity */}
+                    <div>
+                        <h4 style={{ 
+                            color: darkTheme.text, 
+                            fontSize: '14px',
+                            marginBottom: '15px'
+                        }}>Recent Activity</h4>
+                        
+                        {[
+                            { user: 'Shah Rukh Khan', action: 'posted in Computer Science', time: '2h', avatar: '🎬' },
+                            { user: 'Anudhka Shetty', action: 'joined Physics Discussion', time: '4h', avatar: '⭐' },
+                            { user: 'Dashaa', action: 'shared an article', time: '6h', avatar: '📚' },
+                            { user: 'Popo Hegde', action: 'commented on your post', time: '8h', avatar: '🌟' }
+                        ].map((activity, index) => (
+                            <div key={index} style={{
+                                padding: '12px 0',
+                                borderBottom: index < 3 ? `1px solid ${darkTheme.border}` : 'none'
+                            }}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px'
+                                }}>
+                                    <div style={{
+                                        width: '30px',
+                                        height: '30px',
+                                        background: darkTheme.accent,
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '12px'
+                                    }}>{activity.avatar}</div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ 
+                                            color: darkTheme.text, 
+                                            fontSize: '12px',
+                                            fontWeight: '500'
+                                        }}>{activity.user}</div>
+                                        <div style={{ 
+                                            color: darkTheme.textSecondary, 
+                                            fontSize: '10px'
+                                        }}>{activity.action}</div>
+                                    </div>
+                                    <span style={{ 
+                                        color: darkTheme.textSecondary, 
+                                        fontSize: '10px'
+                                    }}>{activity.time}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            // Chat Sidebar
+            const ChatSidebar = () => (
+                <div style={{
+                    width: '300px',
+                    height: '100vh',
+                    background: darkTheme.secondary,
+                    borderLeft: `1px solid ${darkTheme.border}`,
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}>
+                    {/* Chat Header */}
+                    <div style={{
+                        padding: '20px',
+                        borderBottom: `1px solid ${darkTheme.border}`
+                    }}>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: '15px'
+                        }}>
+                            <h3 style={{ 
+                                color: darkTheme.text, 
+                                margin: 0,
+                                fontSize: '16px'
+                            }}>PChat</h3>
+                            <button style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: darkTheme.textSecondary,
+                                cursor: 'pointer',
+                                fontSize: '16px'
+                            }}>📹</button>
+                        </div>
+                        
+                        {/* Search */}
+                        <div style={{
+                            background: darkTheme.accent,
+                            borderRadius: '20px',
+                            padding: '8px 15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            border: `1px solid ${darkTheme.border}`
+                        }}>
+                            <span style={{ color: darkTheme.textSecondary, fontSize: '14px' }}>🔍</span>
+                            <input 
+                                type="text"
+                                placeholder="Search chats"
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    outline: 'none',
+                                    color: darkTheme.text,
+                                    flex: 1,
+                                    fontSize: '12px'
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Chat List */}
+                    <div style={{
+                        flex: 1,
+                        overflow: 'auto',
+                        padding: '10px 0'
+                    }} className="scrollbar">
+                        {chats.map(chat => (
+                            <div 
+                                key={chat.id}
+                                onClick={() => setSelectedChat(chat)}
+                                style={{
+                                    padding: '12px 20px',
+                                    cursor: 'pointer',
+                                    background: selectedChat?.id === chat.id ? darkTheme.accent : 'transparent',
+                                    borderLeft: selectedChat?.id === chat.id ? `3px solid ${darkTheme.success}` : '3px solid transparent',
+                                    transition: 'all 0.2s ease'
+                                }}
+                                onMouseOver={(e) => {
+                                    if (selectedChat?.id !== chat.id) {
+                                        e.currentTarget.style.background = darkTheme.highlight;
+                                    }
+                                }}
+                                onMouseOut={(e) => {
+                                    if (selectedChat?.id !== chat.id) {
+                                        e.currentTarget.style.background = 'transparent';
+                                    }
+                                }}
+                            >
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <div style={{ position: 'relative' }}>
+                                        <div style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            background: darkTheme.accent,
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '16px'
+                                        }}>{chat.avatar}</div>
+                                        {chat.online && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                bottom: '2px',
+                                                right: '2px',
+                                                width: '10px',
+                                                height: '10px',
+                                                background: darkTheme.success,
+                                                borderRadius: '50%',
+                                                border: `2px solid ${darkTheme.secondary}`
+                                            }} />
+                                        )}
+                                    </div>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            marginBottom: '4px'
+                                        }}>
+                                            <h4 style={{ 
+                                                color: darkTheme.text, 
+                                                margin: 0,
+                                                fontSize: '13px',
+                                                fontWeight: '500',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap'
+                                            }}>{chat.name}</h4>
+                                            <span style={{ 
+                                                color: darkTheme.textSecondary, 
+                                                fontSize: '10px'
+                                            }}>{chat.time}</span>
+                                        </div>
+                                        <p style={{ 
+                                            color: darkTheme.textSecondary, 
+                                            margin: 0,
+                                            fontSize: '11px',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                        }}>{chat.lastMessage}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Add Friends Button */}
+                    <div style={{ padding: '20px' }}>
+                        <button style={{
+                            width: '100%',
+                            background: darkTheme.warning,
+                            color: darkTheme.primary,
+                            border: 'none',
+                            padding: '12px',
+                            borderRadius: '25px',
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                        }}>
+                            Add Friends
+                        </button>
+                    </div>
+                </div>
+            );
+
+            // Chat Message View
+            const ChatMessageView = () => (
+                <div style={{
+                    width: '350px',
+                    height: '100vh',
+                    background: darkTheme.secondary,
+                    borderLeft: `1px solid ${darkTheme.border}`,
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}>
+                    {selectedChat ? (
+                        <>
+                            {/* Chat Header */}
+                            <div style={{
+                                padding: '20px',
+                                borderBottom: `1px solid ${darkTheme.border}`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px'
+                            }}>
+                                <div style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    background: darkTheme.accent,
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '16px'
+                                }}>{selectedChat.avatar}</div>
+                                <div style={{ flex: 1 }}>
+                                    <h4 style={{ 
+                                        color: darkTheme.text, 
+                                        margin: '0 0 2px 0',
+                                        fontSize: '14px'
+                                    }}>{selectedChat.name}</h4>
+                                    <span style={{ 
+                                        color: darkTheme.success, 
+                                        fontSize: '11px'
+                                    }}>Online Here...</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: darkTheme.textSecondary,
+                                        cursor: 'pointer',
+                                        fontSize: '14px'
+                                    }}>📞</button>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: darkTheme.textSecondary,
+                                        cursor: 'pointer',
+                                        fontSize: '14px'
+                                    }}>📹</button>
+                                    <button style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: darkTheme.textSecondary,
+                                        cursor: 'pointer',
+                                        fontSize: '14px'
+                                    }}>⚙️</button>
+                                </div>
+                            </div>
+
+                            {/* Messages */}
+                            <div style={{
+                                flex: 1,
+                                padding: '20px',
+                                overflow: 'auto'
+                            }} className="scrollbar">
+                                {/* Sample messages */}
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '10px',
+                                    marginBottom: '20px'
+                                }}>
+                                    <div style={{
+                                        width: '30px',
+                                        height: '30px',
+                                        background: darkTheme.accent,
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '12px'
+                                    }}>{selectedChat.avatar}</div>
+                                    <div style={{
+                                        background: darkTheme.accent,
+                                        padding: '10px 15px',
+                                        borderRadius: '15px 15px 15px 5px',
+                                        maxWidth: '70%'
+                                    }}>
+                                        <p style={{
+                                            color: darkTheme.text,
+                                            margin: 0,
+                                            fontSize: '12px'
+                                        }}>Hey there! How's your project going?</p>
+                                    </div>
+                                </div>
+
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '10px',
+                                    marginBottom: '20px',
+                                    justifyContent: 'flex-end'
+                                }}>
+                                    <div style={{
+                                        background: darkTheme.success,
+                                        padding: '10px 15px',
+                                        borderRadius: '15px 15px 5px 15px',
+                                        maxWidth: '70%'
+                                    }}>
+                                        <p style={{
+                                            color: darkTheme.primary,
+                                            margin: 0,
+                                            fontSize: '12px'
+                                        }}>Going well! Almost done with the frontend. Thanks for asking!</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Message Input */}
+                            <div style={{
+                                padding: '20px',
+                                borderTop: `1px solid ${darkTheme.border}`
+                            }}>
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '10px',
+                                    alignItems: 'center'
+                                }}>
+                                    <div style={{
+                                        flex: 1,
+                                        background: darkTheme.accent,
+                                        borderRadius: '25px',
+                                        padding: '10px 15px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px',
+                                        border: `1px solid ${darkTheme.border}`
+                                    }}>
+                                        <input 
+                                            type="text"
+                                            placeholder="Type a message..."
+                                            style={{
+                                                background: 'transparent',
+                                                border: 'none',
+                                                outline: 'none',
+                                                color: darkTheme.text,
+                                                flex: 1,
+                                                fontSize: '12px'
+                                            }}
+                                        />
+                                        <button style={{
+                                            background: 'transparent',
+                                            border: 'none',
+                                            color: darkTheme.textSecondary,
+                                            cursor: 'pointer',
+                                            fontSize: '14px'
+                                        }}>😊</button>
+                                    </div>
+                                    <button style={{
+                                        background: darkTheme.success,
+                                        border: 'none',
+                                        color: darkTheme.primary,
+                                        width: '35px',
+                                        height: '35px',
+                                        borderRadius: '50%',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '14px'
+                                    }}>➤</button>
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100%',
+                            color: darkTheme.textSecondary,
+                            fontSize: '14px'
+                        }}>
+                            Select a chat to start messaging
+                        </div>
+                    )}
+                </div>
+            );
+
+            // Vibe Section (Profile/Video)
+            const VibeSection = () => (
+                <div style={{
+                    width: '300px',
+                    height: '100vh',
+                    background: darkTheme.secondary,
+                    borderLeft: `1px solid ${darkTheme.border}`,
+                    padding: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}>
+                    {/* Header */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        marginBottom: '20px'
+                    }}>
+                        <h3 style={{ 
+                            color: darkTheme.text, 
+                            margin: 0,
+                            fontSize: '16px'
+                        }}>Vibe</h3>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: darkTheme.warning,
+                                cursor: 'pointer',
+                                fontSize: '16px'
+                            }}>🔴</button>
+                            <button style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: darkTheme.textSecondary,
+                                cursor: 'pointer',
+                                fontSize: '16px'
+                            }}>⋯</button>
+                        </div>
+                    </div>
+
+                    {/* Profile Video/Image */}
+                    <div style={{
+                        width: '100%',
+                        height: '300px',
+                        background: `linear-gradient(45deg, ${darkTheme.accent}, ${darkTheme.highlight})`,
+                        borderRadius: '15px',
+                        marginBottom: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: darkTheme.textSecondary,
+                        fontSize: '48px',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        👤
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '15px',
+                            left: '15px',
+                            right: '15px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <div style={{
+                                background: 'rgba(0, 0, 0, 0.7)',
+                                padding: '5px 10px',
+                                borderRadius: '15px',
+                                color: darkTheme.text,
+                                fontSize: '12px'
+                            }}>Shah Rukh Khan</div>
+                        </div>
+                    </div>
+
+                    {/* Send Vibe Button */}
+                    <button style={{
+                        background: darkTheme.info,
+                        color: darkTheme.primary,
+                        border: 'none',
+                        padding: '12px 24px',
+                        borderRadius: '25px',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        marginBottom: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                    }}>
+                        <span>📤</span>
+                        Send a Vibe
+                    </button>
+
+                    {/* Actions */}
+                    <div style={{
+                        display: 'flex',
+                        gap: '15px',
+                        marginBottom: '20px'
+                    }}>
+                        <button style={{
+                            background: 'transparent',
+                            border: `1px solid ${darkTheme.border}`,
+                            color: darkTheme.textSecondary,
+                            padding: '8px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '16px'
+                        }}>📞</button>
+                        <button style={{
+                            background: 'transparent',
+                            border: `1px solid ${darkTheme.border}`,
+                            color: darkTheme.textSecondary,
+                            padding: '8px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '16px'
+                        }}>💬</button>
+                        <button style={{
+                            background: 'transparent',
+                            border: `1px solid ${darkTheme.border}`,
+                            color: darkTheme.textSecondary,
+                            padding: '8px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '16px'
+                        }}>⚙️</button>
+                    </div>
+                </div>
+            );
+
+            // Login Component
+            if (!isLoggedIn) {
+                return (
+                    <div style={{
+                        minHeight: '100vh',
+                        background: darkTheme.gradient,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '20px'
+                    }}>
+                        <div style={{
+                            background: darkTheme.cardGradient,
+                            padding: '50px',
+                            borderRadius: '25px',
+                            border: `1px solid ${darkTheme.border}`,
+                            boxShadow: darkTheme.shadowDark,
+                            textAlign: 'center',
+                            color: darkTheme.text,
+                            maxWidth: '450px',
+                            width: '100%'
+                        }}>
+                            <div style={{
+                                width: '80px',
+                                height: '80px',
+                                background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                                borderRadius: '50%',
+                                margin: '0 auto 20px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '35px',
+                                boxShadow: `${darkTheme.glowGreen}, ${darkTheme.glowBlue}`
+                            }}>🎓</div>
+
+                            <h1 style={{ 
+                                fontSize: '2.8rem', 
+                                marginBottom: '10px',
+                                background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                fontWeight: 'bold'
+                            }}>
+                                StudentMedia
+                            </h1>
+                            <p style={{ marginBottom: '40px', color: darkTheme.textSecondary }}>
+                                Connect with classmates and build your academic network
+                            </p>
+                            
+                            <div style={{ marginBottom: '25px' }}>
+                                <input 
+                                    type="email" 
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '15px 20px',
+                                        marginBottom: '20px',
+                                        borderRadius: '12px',
+                                        border: `2px solid ${darkTheme.border}`,
+                                        background: darkTheme.accent,
+                                        color: darkTheme.text,
+                                        fontSize: '16px',
+                                        outline: 'none'
+                                    }}
+                                />
+                                <input 
+                                    type="password" 
+                                    placeholder="Enter your password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                                    style={{
+                                        width: '100%',
+                                        padding: '15px 20px',
+                                        marginBottom: '25px',
+                                        borderRadius: '12px',
+                                        border: `2px solid ${darkTheme.border}`,
+                                        background: darkTheme.accent,
+                                        color: darkTheme.text,
+                                        fontSize: '16px',
+                                        outline: 'none'
+                                    }}
+                                />
+                            </div>
+                            
+                            <button 
+                                onClick={handleLogin}
+                                style={{
+                                    background: `linear-gradient(45deg, ${darkTheme.success}, ${darkTheme.info})`,
+                                    color: darkTheme.primary,
+                                    border: 'none',
+                                    padding: '15px 40px',
+                                    borderRadius: '25px',
+                                    cursor: 'pointer',
+                                    fontSize: '18px',
+                                    fontWeight: 'bold',
+                                    width: '100%',
+                                    boxShadow: `${darkTheme.glowGreen}, ${darkTheme.glowBlue}`
+                                }}
+                            >
+                                🚀 Login to StudentMedia
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Main App Layout
+            return (
+                <div style={{
+                    display: 'flex',
+                    height: '100vh',
+                    background: darkTheme.primary
+                }}>
+                    <LeftSidebar />
+                    <div style={{ marginLeft: '240px', flex: 1, display: 'flex' }}>
+                        <MainFeed />
+                        <TagsSidebar />
+                        <ChatSidebar />
+                        {currentView === 'chat' && <ChatMessageView />}
+                        {currentView === 'vibe' && <VibeSection />}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<StudentMediaApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

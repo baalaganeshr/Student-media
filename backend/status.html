@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backend Status</title>
+  <style>
+    body { background: #181818; color: #fff; font-family: Arial, sans-serif; }
+    .container { max-width: 500px; margin: 60px auto; background: #232323; border-radius: 10px; padding: 32px 24px; box-shadow: 0 2px 16px #0008; }
+    h1 { color: #00e676; text-align: center; }
+    .status { margin-top: 24px; }
+    .key { color: #90caf9; }
+    .value { color: #fff; }
+    .ok { color: #00e676; }
+    .fail { color: #ff5252; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Backend Status</h1>
+    <div id="status" class="status">Loading...</div>
+  </div>
+  <script>
+    fetch('/api/status')
+      .then(res => res.json())
+      .then(data => {
+        const s = document.getElementById('status');
+        s.innerHTML = `
+          <div><span class="key">Server:</span> <span class="value ok">${data.server}</span></div>
+          <div><span class="key">MongoDB:</span> <span class="value ${data.mongoConnected ? 'ok' : 'fail'}">${data.mongoConnected ? 'Connected' : 'Disconnected'}</span></div>
+          <div><span class="key">Port:</span> <span class="value">${data.env.PORT}</span></div>
+          <div><span class="key">Mongo URI:</span> <span class="value">${data.env.MONGO_URI}</span></div>
+          <div><span class="key">Client URL:</span> <span class="value">${data.env.CLIENT_URL}</span></div>
+        `;
+      })
+      .catch(() => {
+        document.getElementById('status').innerHTML = '<span class="fail">Could not fetch status.</span>';
+      });
+  </script>
+</body>
+</html>
