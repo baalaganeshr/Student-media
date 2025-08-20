@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LeftSidebar = ({ currentView, setCurrentView }) => {
+const LeftSidebar = ({ user, handleLogout, currentView, setCurrentView }) => {
   const navItems = [
     { id: 'home', icon: '🏠', label: 'Home' },
     { id: 'community', icon: '👥', label: 'Create community' },
@@ -18,10 +18,10 @@ const LeftSidebar = ({ currentView, setCurrentView }) => {
       {/* Profile Section */}
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-success rounded-full mx-auto mb-4 flex items-center justify-center text-2xl shadow-glow-green">
-          👨‍💻
+          {user && user.name ? user.name.charAt(0).toUpperCase() : '👨‍💻'}
         </div>
-        <h3 className="text-text-primary text-base font-semibold">Aman Kohli</h3>
-        <p className="text-text-secondary text-xs">@amankohli9419</p>
+        <h3 className="text-text-primary text-base font-semibold">{user ? user.name : 'Guest'}</h3>
+        <p className="text-text-secondary text-xs">{user ? `@${user.email.split('@')[0]}`: ''}</p>
       </div>
 
       {/* Navigation Menu */}
@@ -42,9 +42,12 @@ const LeftSidebar = ({ currentView, setCurrentView }) => {
 
       {/* Settings */}
       <div className="absolute bottom-5 left-2 right-2">
-        <div className="flex items-center gap-3 p-3 rounded-lg cursor-pointer text-text-secondary text-sm">
+        <div
+          onClick={handleLogout}
+          className="flex items-center gap-3 p-3 rounded-lg cursor-pointer text-text-secondary text-sm hover:bg-highlight"
+        >
           <span className="text-base">⚙️</span>
-          <span>Setting & Support</span>
+          <span>Logout</span>
         </div>
       </div>
     </div>

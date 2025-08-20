@@ -1,54 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import LeftSidebar from './LeftSidebar';
 import MainFeed from './MainFeed';
 import TagsSidebar from './TagsSidebar';
 import ChatSidebar from './ChatSidebar';
 
-const Layout = () => {
+const Layout = ({ user, handleLogout }) => {
     const [currentView, setCurrentView] = useState('home');
     const [selectedChat, setSelectedChat] = useState(null);
+    const [posts, setPosts] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [chats, setChats] = useState([]);
 
-    // Sample data from figma-design.html
-    const [posts] = useState([
-        {
-            id: 1,
-            author: 'Raguram S',
-            avatar: '👨‍💻',
-            content: 'Today was an amazing day! Had a great presentation and learned so much from classmates.',
-            image: true,
-            time: '2h',
-            likes: 23,
-            comments: 5
-        },
-        {
-            id: 2,
-            author: 'Sarah Wilson',
-            avatar: '👩‍🎓',
-            content: 'Study group session for tomorrow\'s exam. Who\'s joining?',
-            time: '4h',
-            likes: 18,
-            comments: 12
-        }
-    ]);
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const response = await axios.get('/api/posts');
+                setPosts(response.data);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        };
 
-    const [chats] = useState([
-        { id: 1, name: 'Shah Rukh Khan', avatar: '🎬', lastMessage: 'Hey, how\'s your project going?', time: '2m', online: true },
-        { id: 2, name: 'Kamal Hassan', avatar: '🎭', lastMessage: 'See you tomorrow!', time: '5m', online: false },
-        { id: 3, name: 'Anudhka Shetty', avatar: '⭐', lastMessage: 'Thanks for the notes!', time: '1h', online: true },
-        { id: 4, name: 'Popo Hegde', avatar: '🌟', lastMessage: 'When is the next class?', time: '3h', online: false },
-        { id: 5, name: 'Vijay Sethupathi', avatar: '🎪', lastMessage: 'Great job on the presentation', time: '5h', online: false },
-        { id: 6, name: 'Samantha', avatar: '✨', lastMessage: 'Can you share the syllabus?', time: '1d', online: true }
-    ]);
+        const fetchTags = async () => {
+            try {
+                const response = await axios.get('/api/tags');
+                setTags(response.data);
+            } catch (error) {
+                console.error('Error fetching tags:', error);
+            }
+        };
 
-    const [tags] = useState([
-        { name: 'Trending', count: '2.1k', color: '#ff6b35' },
-        { name: 'Events', count: '892', color: '#00b4d8' },
-        { name: 'Articles', count: '1.5k', color: '#00ff88' }
-    ]);
+        const fetchChats = async () => {
+            try {
+                const response = await axios.get('/api/chats');
+                setChats(response.data);
+            } catch (error) {
+                console.error('Error fetching chats:', error);
+            }
+        };
+
+        fetchPosts();
+        fetchTags();
+        fetchChats();
+    }, []);
 
     return (
         <div className="flex h-screen bg-primary">
-            <LeftSidebar currentView={currentView} setCurrentView={setCurrentView} />
+            <LeftSidebar user={user} handleLogout={handleLogout} currentView={currentView} setCurrentView={setCurrentView} />
             <div className="ml-60 flex-1 flex">
                 <MainFeed posts={posts} />
                 <TagsSidebar tags={tags} />
