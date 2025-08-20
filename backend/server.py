@@ -603,6 +603,23 @@ async def get_departments():
     departments = ['CSE', 'ECE', 'MECH', 'CIVIL', 'EEE', 'AIDS', 'AIML', 'IT', 'CHEMICAL']
     return {"departments": departments}
 
+@api_router.get("/tags")
+async def get_tags():
+    tags = [
+        { "name": 'Trending', "count": '2.1k', "color": '#ff6b35' },
+        { "name": 'Events', "count": '892', "color": '#00b4d8' },
+        { "name": 'Articles', "count": '1.5k', "color": '#00ff88' }
+    ]
+    return tags
+
+@api_router.get("/chats")
+async def get_chats():
+    chats = [
+        { "id": 1, "name": 'Shah Rukh Khan', "avatar": '🎬', "lastMessage": 'Hey, how\'s your project going?', "time": '2m', "online": True },
+        { "id": 2, "name": 'Kamal Hassan', "avatar": '🎭', "lastMessage": 'See you tomorrow!', "time": '5m', "online": False },
+    ]
+    return chats
+
 # Include router in main app
 app.include_router(api_router)
 
