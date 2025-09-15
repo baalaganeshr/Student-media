@@ -1,16 +1,20 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-const LeftSidebar = ({ user, handleLogout, currentView, setCurrentView }) => {
+const LeftSidebar = ({ user, handleLogout }) => {
+  const location = useLocation();
+
   const navItems = [
-    { id: 'home', icon: '🏠', label: 'Home' },
-    { id: 'community', icon: '👥', label: 'Create community' },
-    { id: 'profile', icon: '👤', label: 'Profile' },
-    { id: 'bookmarks', icon: '🔖', label: 'Bookmarks' },
-    { id: 'like', icon: '❤️', label: 'Like' },
-    { id: 'your-community', icon: '🌐', label: 'Your Community' },
-    { id: 'recently-visited', icon: '🕒', label: 'Recently Visited' },
-    { id: 'games', icon: '🎮', label: 'Games' },
-    { id: 'mela', icon: '🎪', label: 'Mela' }
+    { id: 'home', icon: '🏠', label: 'Home', path: '/' },
+    { id: 'chat', icon: '💬', label: 'PChat', path: '/chat' },
+    { id: 'community', icon: '👥', label: 'Create community', path: '#' },
+    { id: 'profile', icon: '👤', label: 'Profile', path: '#' },
+    { id: 'bookmarks', icon: '🔖', label: 'Bookmarks', path: '#' },
+    { id: 'like', icon: '❤️', label: 'Like', path: '#' },
+    { id: 'your-community', icon: '🌐', label: 'Your Community', path: '#' },
+    { id: 'recently-visited', icon: '🕒', label: 'Recently Visited', path: '#' },
+    { id: 'games', icon: '🎮', label: 'Games', path: '#' },
+    { id: 'mela', icon: '🎪', label: 'Mela', path: '#' }
   ];
 
   return (
@@ -27,16 +31,16 @@ const LeftSidebar = ({ user, handleLogout, currentView, setCurrentView }) => {
       {/* Navigation Menu */}
       <nav>
         {navItems.map(item => (
-          <div
+          <Link
             key={item.id}
-            onClick={() => setCurrentView(item.id)}
+            to={item.path}
             className={`flex items-center gap-3 p-3 my-1 rounded-lg cursor-pointer transition-all duration-200 text-sm
-              ${currentView === item.id ? 'bg-accent text-text-primary' : 'text-text-secondary hover:bg-highlight'}`
+              ${location.pathname === item.path ? 'bg-accent text-text-primary' : 'text-text-secondary hover:bg-highlight'}`
             }
           >
             <span className="text-base">{item.icon}</span>
             <span>{item.label}</span>
-          </div>
+          </Link>
         ))}
       </nav>
 
